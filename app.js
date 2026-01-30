@@ -4,7 +4,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfKybQyC2rctTO0xGoGhpRqyaBd0ZFJrjCbD0pBewu14fhQMZujQw06OEZR8sP8nm7eJlU/exec";
 
 // 2) Update your sites list here (names shown in the Home screen)
-const SITES = ["בן גביר","אורית סטרוק","ארז","אורן","מוריה","זוקף מוריה","אגוז","ורד","אוקליפטוס","זוקף אוקליפטוס","זוקף סביון"];
+const SITES = ["רותם","דפנה","ארז","אורן","מוריה","זוקף מוריה","אגוז","ורד","אוקליפטוס","זוקף אוקליפטוס","זוקף סביון"];
 
 function qs(name){ return new URLSearchParams(location.search).get(name); }
 

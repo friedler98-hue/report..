@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>כל התקלות</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="tabs">
+      <a class="tab" href="index.html">דף הבית</a>
+      <a class="tab active" href="all.html">כל התקלות</a>
+      <a class="tab" href="admin.html">אדמין</a>
+    </div>
+
+    <h2>כל התקלות</h2>
+    <p class="muted">תצוגה של כל הדיווחים מכל המתחמים.</p>
+
+    <label>סינון לפי מתחם</label>
+    <select id="siteFilter"></select>
+
+    <label>סינון לפי סטטוס</label>
+    <select id="statusFilter">
+      <option value="">הכל</option>
+      <option value="פתוח">פתוח</option>
+      <option value="בטיפול">בטיפול</option>
+      <option value="טופל">טופל</option>
+    </select>
+
+    <div id="list"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const siteSel = document.getElementById("siteFilter");
+    siteSel.innerHTML = `<option value="">הכל</option>` + SITES.map(s=>`<option>${escapeHtml(s)}</option>`).join("");
+
+    async function load(){
+      const wrap = document.getElementById("list");
+      wrap.innerHTML = "טוען…";
+      try{
+        const data = await apiList("");
+        wrap.innerHTML = "";
+        if (!data.ok) { wrap.textContent = "שגיאה בטעינת נתונים"; return; }
+
+        const siteV = siteSel.value;
+        const statusV = document.getElementById("statusFilter").value;
+
+        const rows = data.data.filter(r => (!siteV || r.site === siteV) && (!statusV || r.status === statusV));
+
+        if (!rows.length){ wrap.textContent = "אין תוצאות"; return; }
+
+        rows.forEach(r=>{
+          const div = document.createElement("div");
+          div.className = "report";
+          const cls = (r.status === "טופל") ? "done" : (r.status === "בטיפול" ? "progress" : "open");
+          div.innerHTML = `
+            <div class="row">
+              <div class="id">${escapeHtml(r.id)}</div>
+              <div class="time">${escapeHtml(formatTime(r.timestamp))}</div>
+            </div>
+            <div class="line"><b>מתחם:</b> ${escapeHtml(r.site)}</div>
+            <div class="line">${escapeHtml(r.area)} | ${escapeHtml(r.type)}</div>
+            <div class="line">${escapeHtml(r.item)}</div>
+            <div class="line urgency">${escapeHtml(r.urgency)}</div>
+            <div class="status ${cls}">${escapeHtml(r.status)}</div>
+          `;
+          wrap.appendChild(div);
+        });
+      }catch(e){
+        wrap.textContent = "שגיאה (בדוק API_URL / הרשאות Apps Script)";
+      }
+    }
+
+    siteSel.onchange = load;
+    document.getElementById("statusFilter").onchange = load;
+    load();
+  </script>
+</body>
+</html>

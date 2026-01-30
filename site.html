@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>מתקן</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="tabs">
+      <a class="tab" href="index.html">דף הבית</a>
+      <a class="tab" href="all.html">כל התקלות</a>
+      <a class="tab active" href="#" id="selfTab">מתקן</a>
+    </div>
+
+    <h2 id="title">מתקן</h2>
+
+    <button class="btn" id="newBtn">+ דיווח תקלה / חוסר חדש</button>
+
+    <h3>דיווחים קיימים</h3>
+    <div id="list"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const site = qs("site") || "";
+    document.getElementById("title").textContent = `מתקן ${site}`;
+    document.getElementById("selfTab").textContent = site ? `מתקן: ${site}` : "מתקן";
+
+    document.getElementById("newBtn").onclick = () => {
+      location.href = `new.html?site=${encodeURIComponent(site)}`;
+    };
+
+    function statusClass(status){
+      if (status === "טופל") return "status done";
+      if (status === "בטיפול") return "status progress";
+      return "status open";
+    }
+
+    async function load() {
+      const wrap = document.getElementById("list");
+      wrap.innerHTML = "טוען…";
+      try{
+        const data = await apiList(site);
+        wrap.innerHTML = "";
+        if (!data.ok) { wrap.textContent = "שגיאה בטעינת נתונים"; return; }
+        if (!data.data.length){ wrap.textContent = "אין דיווחים עדיין"; return; }
+
+        data.data.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "report";
+
+          const next = (r.status === "טופל") ? "פתוח" : "טופל";
+          const btnText = (r.status === "טופל") ? "סמן פתוח" : "סמן טופל";
+
+          div.innerHTML = `
+            <div class="row">
+              <div class="id">${escapeHtml(r.id)}</div>
+              <div class="time">${escapeHtml(formatTime(r.timestamp))}</div>
+            </div>
+            <div class="line">${escapeHtml(r.area)}</div>
+            <div class="line">${escapeHtml(r.type)}</div>
+            <div class="line">${escapeHtml(r.item)}</div>
+            <div class="line urgency">${escapeHtml(r.urgency)}</div>
+            <div class="${statusClass(r.status)}">${escapeHtml(r.status)}</div>
+            <button class="miniBtn">${btnText}</button>
+          `;
+
+          div.querySelector(".miniBtn").onclick = async () => {
+            await apiSetStatus(r.id, next);
+            load();
+          };
+
+          wrap.appendChild(div);
+        });
+      }catch(e){
+        wrap.textContent = "שגיאה (בדוק API_URL / הרשאות Apps Script)";
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

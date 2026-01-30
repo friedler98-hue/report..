@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>דיווח תקלות</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="tabs">
+      <a class="tab active" href="index.html">דף הבית</a>
+      <a class="tab" href="all.html">כל התקלות</a>
+      <a class="tab" href="admin.html">אדמין</a>
+    </div>
+
+    <h2>בחר מתחם</h2>
+    <p class="muted">בחר מתחם כדי להיכנס לדוחות על תקלות או חוסרים.</p>
+
+    <div class="note">
+      <div><b>לפני הכל:</b> פתח את <code>app.js</code> והדבק את כתובת ה־WebApp של Apps Script בתוך <code>API_URL</code>.</div>
+      <div style="margin-top:6px;">אחרת הדפים יעלו — אבל לא יראו נתונים.</div>
+    </div>
+
+    <hr />
+
+    <div class="list" id="sites"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const wrap = document.getElementById("sites");
+    SITES.forEach(s=>{
+      const a = document.createElement("a");
+      a.className = "listItem";
+      a.href = `site.html?site=${encodeURIComponent(s)}`;
+      a.textContent = s;
+      wrap.appendChild(a);
+    });
+  </script>
+</body>
+</html>

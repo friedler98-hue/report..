@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>דיווח חדש</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="tabs">
+      <a class="tab" href="index.html">דף הבית</a>
+      <a class="tab" id="backSite" href="#">חזרה למתקן</a>
+      <a class="tab active" href="#">דיווח חדש</a>
+    </div>
+
+    <h2 id="hdr">דיווח חדש</h2>
+
+    <div class="step" id="s1">
+      <h3>דיווח חדש – שלב 1 מתוך 3</h3>
+      <p class="muted">בחר את האזור במתקן וסוג הבעיה.</p>
+
+      <label>אזור במתקן</label>
+      <select id="area">
+        <option value="">בחר אזור…</option>
+        <option>סלון</option>
+        <option>מטבח</option>
+        <option>חדר שינה</option>
+        <option>מקלחת</option>
+        <option>שירותים</option>
+        <option>מרפסת</option>
+        <option>עמדת נוכח</option>
+        <option>אחר</option>
+      </select>
+
+      <label>סוג הבעיה</label>
+      <div class="btnRow">
+        <button type="button" class="chip" data-type="משהו חסר">משהו חסר 📦</button>
+        <button type="button" class="chip" data-type="משהו התקלקל">משהו התקלקל 🔧</button>
+        <button type="button" class="chip" data-type="משהו אחר">משהו אחר ❓</button>
+      </div>
+
+      <button class="btn" id="to2">המשך לשלב 2</button>
+    </div>
+
+    <div class="step hidden" id="s2">
+      <h3>דיווח חדש – שלב 2 מתוך 3</h3>
+      <p class="muted">פרטי הפריט והתיאור.</p>
+
+      <label>על איזה פריט?</label>
+      <input id="item" placeholder="לדוגמה: כיסא, מקרר, מיטה…" />
+
+      <label>תיאור קצר</label>
+      <textarea id="desc" placeholder="מה בדיוק הבעיה?"></textarea>
+
+      <label>דחיפות</label>
+      <div>
+        <label><input type="radio" name="urg" value="קריטי" /> קריטי (מים/חשמל/גז/בטיחות)</label><br/>
+        <label><input type="radio" name="urg" value="רגיל" checked /> רגיל</label>
+      </div>
+
+      <button class="btn secondary" id="back1">חזרה לשלב 1</button>
+      <button class="btn" id="to3">המשך לשלב 3</button>
+    </div>
+
+    <div class="step hidden" id="s3">
+      <h3>דיווח חדש – שלב 3 מתוך 3</h3>
+      <p class="muted">סיכום לפני שליחה.</p>
+
+      <div class="summary" id="sum"></div>
+
+      <div class="note" style="margin-top:12px;">
+        <b>תמונה (לא חובה):</b> בגרסה הזאת השארתי את זה לשדרוג, כי העלאת קובץ דורשת הרשאות Drive + שינוי API.
+        אם תרצה – אני אתן לך גם את גרסת "העלאת תמונה" המלאה.
+      </div>
+
+      <button class="btn secondary" id="back2">חזרה לשלב 2</button>
+      <button class="btn" id="send">שלח דיווח</button>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+<script>
+  const site = qs("site") || "";
+  document.getElementById("hdr").textContent = `דיווח חדש – ${site}`;
+  document.getElementById("backSite").href = `site.html?site=${encodeURIComponent(site)}`;
+
+  let type = "";
+
+  document.querySelectorAll(".chip").forEach(b=>{
+    b.onclick = () => {
+      type = b.dataset.type;
+      document.querySelectorAll(".chip").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+    };
+  });
+
+  const s1 = document.getElementById("s1");
+  const s2 = document.getElementById("s2");
+  const s3 = document.getElementById("s3");
+
+  document.getElementById("to2").onclick = () => {
+    if (!document.getElementById("area").value || !type) return alert("בחר אזור וסוג בעיה");
+    s1.classList.add("hidden"); s2.classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+  document.getElementById("back1").onclick = () => { s2.classList.add("hidden"); s1.classList.remove("hidden"); window.scrollTo({top:0, behavior:"smooth"}); };
+  document.getElementById("to3").onclick = () => {
+    const area = document.getElementById("area").value;
+    const item = document.getElementById("item").value.trim();
+    const desc = document.getElementById("desc").value.trim();
+    const urg = document.querySelector('input[name="urg"]:checked').value;
+
+    if (!item || !desc) return alert("מלא פריט ותיאור");
+
+    document.getElementById("sum").innerHTML = `
+      <h4>סיכום לפני שליחה</h4>
+      <div><b>מתחם:</b> ${escapeHtml(site)}</div>
+      <div><b>אזור:</b> ${escapeHtml(area)}</div>
+      <div><b>סוג:</b> ${escapeHtml(type)}</div>
+      <div><b>פריט:</b> ${escapeHtml(item)}</div>
+      <div><b>תיאור:</b> ${escapeHtml(desc)}</div>
+      <div><b>דחיפות:</b> ${escapeHtml(urg)}</div>
+    `;
+    s2.classList.add("hidden"); s3.classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+  document.getElementById("back2").onclick = () => { s3.classList.add("hidden"); s2.classList.remove("hidden"); window.scrollTo({top:0, behavior:"smooth"}); };
+
+  document.getElementById("send").onclick = async () => {
+    const payload = {
+      site,
+      area: document.getElementById("area").value,
+      type,
+      item: document.getElementById("item").value.trim(),
+      desc: document.getElementById("desc").value.trim(),
+      urgency: document.querySelector('input[name="urg"]:checked').value,
+      imageUrl: ""
+    };
+
+    try{
+      const data = await apiCreate(payload);
+      if (!data.ok) return alert("שגיאה בשליחה");
+      alert("הדיווח נשלח ✅");
+      location.href = `site.html?site=${encodeURIComponent(site)}`;
+    }catch(e){
+      alert("שגיאה (בדוק API_URL / הרשאות Apps Script)");
+    }
+  };
+</script>
+</body>
+</html>

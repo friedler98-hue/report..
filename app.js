@@ -1,7 +1,7 @@
 // === CONFIG ===
 // 1) After you deploy your Google Apps Script Web App, paste its URL here.
 // Example: https://script.google.com/macros/s/AKfycb.../exec
-const API_URL = "https://script.google.com/macros/s/AKfKybQyC2rctTO0xGoGhpRqyaBd0ZFJrjCbD0pBewu14fhQMZujQw06OEZR8sP8nm7eJlU/exec";
+const API_URL =https://script.google.com/macros/s/AKfycbyC27tcmToOXoGphRcyaBdDZFJrjcbBOutpeawlf4hIQMvzujQWo6OEZRsp8mn7eh3l/exec
 
 // 2) Update your sites list here (names shown in the Home screen)
 const SITES = ["רותם","דפנה","ארז","אורן","מוריה","זוקף מוריה","אגוז","ורד","אוקליפטוס","זוקף אוקליפטוס","זוקף סביון"];

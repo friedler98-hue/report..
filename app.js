@@ -1,10 +1,10 @@
 // === CONFIG ===
 // 1) After you deploy your Google Apps Script Web App, paste its URL here.
 // Example: https://script.google.com/macros/s/AKfycb.../exec
-const API_URL = "PASTE_YOUR_WEBAPP_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbyC27tcmToOXoGphRcyaBdDZFJrjcbBOutpeawlf4hIQMvzujQWo6OEZRsp8mn7eh3l/exec";
 
 // 2) Update your sites list here (names shown in the Home screen)
-const SITES = ["רותם","דפנה","ארז","אורן","מוריה","זוקף מוריה","אגוז","ורד","אוקליפטוס","זוקף אוקליפטוס","זוקף סביון"];
+const SITES = ["בן גביר","אורית סטרוק","ארז","אורן","מוריה","זוקף מוריה","אגוז","ורד","אוקליפטוס","זוקף אוקליפטוס","זוקף סביון"];
 
 function qs(name){ return new URLSearchParams(location.search).get(name); }
 
